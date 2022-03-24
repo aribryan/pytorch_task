@@ -19,8 +19,8 @@ import pdb
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dimensions',default=32, type=int,help='channel expansion in Unet')  # odd
-parser.add_argument('--gpu_id', type=int, default=0, help='gpu number in a cluster')
+parser.add_argument('--dimensions',default=32, type=int,help='channel expansion in Unet')
+parser.add_argument('--gpu_id', type=int, default=0, help='gpu number in a cluster') # multi-gpu, once this works
 parser.add_argument('--lr', default=1e-3, type=float, help='learning rate')
 parser.add_argument('--batch_size', default=8, type=int,help='training batch size')
 parser.add_argument('--log', default="./log",help='log dump')
@@ -38,9 +38,19 @@ if not os.path.exists(result_root): os.mkdir(result_root)
 logging.basicConfig(filename='%s/train.log' % args.log, format='%(asctime)s %(message)s', level=logging.INFO)
 device = torch.cuda.set_device(args.gpu_id)
 
+#initialize model
 
 model = Network(args).cuda().to(device)
+# resume model
+if args.resume_training_from!=None:
+    checkpoint = torch.load(args.resume_training_from)
+    model.load_state_dict(checkpoint)
 
+    print('checkpoint resumption invoked , model loaded from ',args.resume_from)
+
+print('No. params: %d' % (sum(p.numel() for p in model.parameters() if p.requires_grad),) )
+
+# setup criterions
 criterion = nn.BCEWithLogitsLoss()
 optimizer = optim.Adam(model.parameters(), lr=args.lr)
 scheduler = lr_scheduler.StepLR(optimizer, step_size=10000, gamma=0.2)

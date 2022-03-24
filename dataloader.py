@@ -9,7 +9,7 @@ from utils import transform
 
 import pdb
 
-class BinSegData(Dataset):
+class CustomData(Dataset):
 
     def __init__(self, root,mode='train',transform=None):
 

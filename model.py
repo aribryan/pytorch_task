@@ -61,11 +61,11 @@ class up_layer(nn.Module):
 
 
 
-class simpleUNet(nn.Module):
+class Network(nn.Module):
     def __init__(self, args):
 
         self.dimensions=args.dimensions
-        super(simpleUNet, self).__init__()
+        super(Network, self).__init__()
         self.conv1 = double_conv(3, self.dimensions)
         self.down1 = down_layer(self.dimensions, self.dimensions*2)
         self.down2 = down_layer(self.dimensions*2, self.dimensions*4)

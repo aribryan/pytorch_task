@@ -6,7 +6,6 @@ import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import pdb
 
-
 def accuracy(pred, gt,threshold=0.5):
 
     predictions = (torch.sigmoid(pred)).float()>threshold
